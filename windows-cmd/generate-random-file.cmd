@@ -11,5 +11,5 @@ REM path of git-bash.exe
 set gitBashPath=""
 REM ================================
 
-set randomFileName=.\random-file-%RANDOM%-%RANDOM%.txt
+set randomFileName=random-file-%RANDOM%-%RANDOM%.txt
 %gitBashPath% -c "openssl rand -base64 3000 > %randomFileName% "
