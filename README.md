@@ -12,6 +12,8 @@ The repo contains handy scripts for daily/work use.
 
 # linux-shell
 
-| 脚本名                           | 作用                                                         |
-| -------------------------------- | ------------------------------------------------------------ |
+| 脚本名                           | 作用                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------ |
 | start-mysql-cluster-in-docker.sh | 启动一个临时的一主二从 MySQL 主从复制集群，<br />以 3 个 Docker 容器的形式运行 |
+| start-kafka.sh                   | 按照顺序，依次启动 Zookeeper 和 Kafka                                          |
+| stop-kafka.sh                    | 按照顺序，依次停止 Kafka 和 Zookeeper                                          |
