@@ -55,8 +55,7 @@ foreach ($name in $fileNameList) {
         if ("" -eq $programPath) { Start-Process $name }
         else { Start-Process $programPath $name }
         break
-    }
-    else { $index = $index - 1 }
+    } else { $index = $index - 1 }
 }
 
 Write-Output "all done"
