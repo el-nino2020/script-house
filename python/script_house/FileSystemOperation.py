@@ -25,7 +25,8 @@ def random_open(directory: str = None,
     if directory is not None:
         if not os.path.isdir(directory):
             raise Exception(f"not a valid directory: {directory}")
-        file_list = os.listdir(directory)
+        files = [os.path.join(directory, name) for name in os.listdir(directory)]
+        file_list = [name for name in files if os.path.isfile(name)]
 
     if file_list is not None:
         for file in file_list:
@@ -40,7 +41,7 @@ def random_open(directory: str = None,
         raise Exception(f"not a valid program path: {program_path}")
 
     # List files, count valid files
-    valid_files = [name for name in file_list if name not in exclude_file_names]
+    valid_files = [name for name in file_list if os.path.basename(name) not in exclude_file_names]
     valid_num = len(valid_files)
 
     if valid_num == 0:
