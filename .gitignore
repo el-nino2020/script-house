@@ -5,8 +5,8 @@ test/
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!python/script_house/main/**/target/
+!python/script_house/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -30,8 +30,12 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!python/script_house/main/**/build/
+!python/script_house/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+### python ###
+/**/dist/
+/**/*.egg-info/
