@@ -28,22 +28,19 @@ def random_open(directory: str = None,
         raise Exception("directory and file_name_list cannot be both None, nor can they both have values")
 
     if directory is not None:
-        if not os.path.isdir(directory):
-            raise Exception(f"not a valid directory: {directory}")
-        files = [os.path.join(directory, name) for name in os.listdir(directory)]
-        file_list = [name for name in files if os.path.isfile(name)]
+        assert_is_dir(directory)
+        files = [join(directory, name) for name in os.listdir(directory)]
+        file_list = [name for name in files if isfile(name)]
 
     if file_list is not None:
         for file in file_list:
-            if not os.path.isfile(file):
-                raise Exception(f"not a valid file name: {file}")
+            assert_is_file(file)
 
     if exclude_file_names is None:
         exclude_file_names = []
     exclude_file_names = set(exclude_file_names)
 
-    if not os.path.isfile(program_path):
-        raise Exception(f"not a valid program path: {program_path}")
+    assert_is_file(program_path)
 
     # List files, count valid files
     valid_files = [name for name in file_list if os.path.basename(name) not in exclude_file_names]
