@@ -1,3 +1,4 @@
+import datetime
 import os
 
 
@@ -24,3 +25,26 @@ def winapi_path(path: str):
     if path.startswith(u"\\\\"):
         return u"\\\\?\\UNC\\" + path[2:]
     return u"\\\\?\\" + path
+
+
+def get_create_time(path: str):
+    if not os.path.exists(path):
+        raise Exception(f'not a valid path: {path}')
+    return datetime.datetime.fromtimestamp(os.path.getctime(path))
+
+
+def get_last_create_time(directory: str) -> datetime:
+    """
+    walk through a dir tree, return the last create time of file in it
+    """
+    directory = os.path.abspath(directory)
+    assert_is_dir(directory)
+
+    # the creation time of the dir must be less than those of all files in it
+    ans = get_create_time(directory)
+    for (root, dirs, files) in os.walk(directory, topdown=True):
+        if len(files) == 0:
+            continue
+        ans = max(ans, max([get_create_time(os.path.join(root, file)) for file in files]))
+
+    return ans
