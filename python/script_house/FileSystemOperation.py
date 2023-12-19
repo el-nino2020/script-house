@@ -40,7 +40,8 @@ def random_open(directory: str = None,
         exclude_file_names = []
     exclude_file_names = set(exclude_file_names)
 
-    assert_is_file(program_path)
+    if program_path != "":
+        assert_is_file(program_path)
 
     # List files, count valid files
     valid_files = [name for name in file_list if os.path.basename(name) not in exclude_file_names]
@@ -118,3 +119,7 @@ def walk_while_extract(zip_dir: str,
 
     print(f'total extracted: {extract_count}')
     print(f'total ignored: {ignore_count}')
+
+
+def random_open_from_multiple():
+    pass
