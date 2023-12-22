@@ -9,8 +9,8 @@ from pathlib import Path
 
 
 def random_open(directory: str = None,
-                file_list: [str] = None,
-                exclude_file_names: [str] = None,
+                file_list: list[str] = None,
+                exclude_file_names: list[str] = None,
                 program_path: str = "",
                 log_file: str = "RandomOpenLog.txt") -> None:
     """
