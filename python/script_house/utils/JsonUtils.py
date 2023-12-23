@@ -8,12 +8,19 @@ from marshmallow import Schema
 """
 The conversion flow:
 str <-> built-in types <-> custom class 
-
+            ^
+            |
+            v
+           file
+           
 (1) str <-> built-in types 
     uses python's default json module
     
 (2) built-in types <-> custom class 
     uses marshmallow_dataclass and requires the custom class annotated with @marshmallow_dataclass.dataclass
+
+(3) built-in types <-> file
+    uses python's default json module
 """
 
 
