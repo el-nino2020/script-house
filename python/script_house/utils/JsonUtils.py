@@ -1,9 +1,9 @@
 import json
-import inspect
 
 from .FileSystemUtils import assert_is_file
 from os.path import isfile
-from marshmallow import Schema
+# bson库依赖pymongo，才能正常使用 json_util
+from bson import json_util
 
 """
 The conversion flow:
@@ -17,19 +17,11 @@ str <-> built-in types <-> custom class
     uses python's default json module
     
 (2) built-in types <-> custom class 
-    uses marshmallow_dataclass and requires the custom class annotated with @marshmallow_dataclass.dataclass
+    uses Pydantic and requires the custom class inherits pydantic.BaseModel
 
 (3) built-in types <-> file
     uses python's default json module
 """
-
-
-def get_marshmallow_dataclass_schema(clazz: type) -> Schema:
-    if not inspect.isclass(clazz):
-        raise Exception(f'not a class: {clazz}')
-    if len([method for method in dir(clazz) if method == 'Schema']) == 0:
-        raise Exception(f'annotate {clazz} with @marshmallow_dataclass.dataclass first')
-    return clazz.Schema()
 
 
 def write(obj, file: str, force_write: bool = False, clazz: type = None):
@@ -37,31 +29,31 @@ def write(obj, file: str, force_write: bool = False, clazz: type = None):
         raise Exception(f'file already exists, but force write is not allowed.')
 
     if clazz is not None:
-        obj = get_marshmallow_dataclass_schema(clazz).dump(obj)
+        obj = obj.model_dump()
 
     with open(file, 'w', encoding='utf-8') as f:
-        json.dump(obj, f, ensure_ascii=False, indent=4)
+        json.dump(obj, f, ensure_ascii=False, indent=4, default=json_util.default)
 
 
 def read(file: str, clazz: type = None):
     assert_is_file(file)
     with open(file, 'r', encoding='utf-8') as f:
-        obj = json.load(f)
+        obj = json.load(f, object_hook=json_util.object_hook)
 
     if clazz is None:
         return obj
-    return get_marshmallow_dataclass_schema(clazz).load(obj)
+    return clazz(**obj)
 
 
 def to_str(obj, clazz: type = None):
     if clazz is not None:
-        obj = get_marshmallow_dataclass_schema(clazz).dump(obj)
-    return json.dumps(obj, ensure_ascii=False, indent=4)
+        obj = obj.model_dump()
+    return json.dumps(obj, ensure_ascii=False, indent=4, default=json_util.default)
 
 
 def to_obj(string: str, clazz: type = None):
     # return a dict
-    obj = json.loads(string)
+    obj = json.loads(string, object_hook=json_util.object_hook)
     if clazz is None:
         return obj
-    return get_marshmallow_dataclass_schema(clazz).load(obj)
+    return clazz(**obj)
