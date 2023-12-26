@@ -1,8 +1,11 @@
 from setuptools import find_packages, setup
 
+with open('README.md', 'r', encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name="script_house",
-    version="0.0.1",
+    version="0.0.2",
     description="a python script house containing handy scripts for daily use",
     packages=find_packages(),
     url="https://github.com/el-nino2020/script-house",
@@ -19,5 +22,7 @@ setup(
         "Natural Language :: Chinese (Simplified)",
         "Natural Language :: English",
         "Programming Language :: Python :: 3"
-    ]
+    ],
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )
