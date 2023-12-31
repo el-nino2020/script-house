@@ -61,9 +61,9 @@ def random_open(directory: str = None,
         log.write("============================\n\n")
 
     if program_path == "":
-        os.system(f'"{name}"')
+        os.system(f'start /b "" cmd /c "{name}"')
     else:
-        os.system(f'{program_path} "{name}"')
+        os.system(f'start /b "" {program_path} "{name}"')
 
     print("all done")
 
