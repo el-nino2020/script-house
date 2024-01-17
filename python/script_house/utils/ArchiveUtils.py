@@ -48,6 +48,9 @@ class RARUtils(BaseArchiveUtils):
             compress_rate: int = 3,
             recovery_rate: int = None) -> subprocess.CompletedProcess:
 
+        if '"' in output_path:
+            raise Exception('no " in output_path')
+
         files_str = ""
         for f in files:
             f = f.strip()
@@ -75,5 +78,5 @@ class RARUtils(BaseArchiveUtils):
         # -o- 跳过已存在文件。如果已经存在 output_path，则程序返回码是 10
         # -ep1 保留压缩文件夹路径
         # -r0 递归文件夹，但是指定文件时不会递归文件所在的目录
-        cmd = f'{self._exe} a -ep1 -o- -m{compress_rate} {pwd} {recovery_rate} -r0 {output_path} {files_str}'
+        cmd = f'{self._exe} a -ep1 -o- -m{compress_rate} {pwd} {recovery_rate} -r0 "{output_path}" {files_str}'
         return SystemUtils.run(cmd)
