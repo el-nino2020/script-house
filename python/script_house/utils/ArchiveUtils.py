@@ -1,7 +1,8 @@
+import os
 import subprocess
 
 from . import SystemUtils
-from .FileSystemUtils import assert_is_file
+from .FileSystemUtils import assert_is_file, assert_is_path
 
 
 class BaseArchiveUtils:
@@ -38,5 +39,41 @@ class RARUtils(BaseArchiveUtils):
             if output_dir[-1] != '\\':
                 output_dir += '\\'
             cmd += f' "{output_dir}"'
-        print(cmd)
+        return SystemUtils.run(cmd)
+
+    def add(self,
+            output_path: str,
+            files: list[str],
+            pwd: str = '',
+            compress_rate: int = 3,
+            recovery_rate: int = None) -> subprocess.CompletedProcess:
+
+        files_str = ""
+        for f in files:
+            f = f.strip()
+            assert_is_path(f)
+            files_str += f' "{f}" '
+
+        pwd = pwd.strip()
+        if pwd != '':
+            if len(pwd) > 126:
+                raise Exception("len(pwd) <= 126")
+            if '"' in pwd:
+                raise Exception('no " in pwd')
+            # -hp 加密文件和文件名
+            pwd = '-hp"' + pwd + '"'
+
+        if not (0 <= compress_rate <= 5):
+            raise Exception('compress_rate should between 0 and 5')
+
+        if recovery_rate:
+            if not (1 <= recovery_rate):
+                raise Exception('recovery_rate should be greater than 0')
+            recovery_rate = '-rr' + str(recovery_rate) + '%'
+        else:
+            recovery_rate = ''
+        # -o- 跳过已存在文件。如果已经存在 output_path，则程序返回码是 10
+        # -ep1 保留压缩文件夹路径
+        # -r0 递归文件夹，但是指定文件时不会递归文件所在的目录
+        cmd = f'{self._exe} a -ep1 -o- -m{compress_rate} {pwd} {recovery_rate} -r0 {output_path} {files_str}'
         return SystemUtils.run(cmd)

@@ -12,6 +12,11 @@ def assert_is_dir(path: str):
         raise Exception(f"not a valid directory: {path}")
 
 
+def assert_is_path(path: str):
+    if not (os.path.isdir(path) or os.path.isfile(path)):
+        raise Exception(f"not a valid path: {path}")
+
+
 def winapi_path(path: str):
     """
     Regular DOS paths are limited to MAX_PATH (260) characters. When the size exceeds this limit,
