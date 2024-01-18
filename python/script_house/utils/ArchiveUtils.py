@@ -46,7 +46,9 @@ class RARUtils(BaseArchiveUtils):
             files: list[str],
             pwd: str = '',
             compress_rate: int = 3,
-            recovery_rate: int = None) -> subprocess.CompletedProcess:
+            recovery_rate: int = None,
+            solid_archive: bool = False,
+            dict_size: str = '32') -> subprocess.CompletedProcess:
 
         if '"' in output_path:
             raise Exception('no " in output_path')
@@ -75,8 +77,18 @@ class RARUtils(BaseArchiveUtils):
             recovery_rate = '-rr' + str(recovery_rate) + '%'
         else:
             recovery_rate = ''
+
+        # 固实压缩
+        if solid_archive:
+            solid_archive = '-s'
+        else:
+            solid_archive = ''
+
+        # 字典大小
+        dict_size = '-md' + dict_size
+
         # -o- 跳过已存在文件。如果已经存在 output_path，则程序返回码是 10
         # -ep1 保留压缩文件夹路径
         # -r0 递归文件夹，但是指定文件时不会递归文件所在的目录
-        cmd = f'{self._exe} a -ep1 -o- -m{compress_rate} {pwd} {recovery_rate} -r0 "{output_path}" {files_str}'
+        cmd = f'{self._exe} a {solid_archive} {dict_size}  -ep1 -o- -m{compress_rate} {pwd} {recovery_rate} -r0 "{output_path}" {files_str}'
         return SystemUtils.run(cmd)
