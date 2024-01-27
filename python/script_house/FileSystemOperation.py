@@ -6,6 +6,7 @@ import zipfile
 from os.path import join, isfile, isdir
 import locale
 from pathlib import Path
+from .utils.SystemUtils import run
 
 
 def random_open(directory: str = None,
@@ -121,5 +122,68 @@ def walk_while_extract(zip_dir: str,
     print(f'total ignored: {ignore_count}')
 
 
-def random_open_from_multiple():
-    pass
+def walk_while_link(src_dir: str, target_dir: str,
+                    exclude_suffixes: list[str] = [],
+                    include_suffixes: list[str] = []):
+    """
+    递归遍历 src_dir，为其中所有文件建立符号链接。这些符号链接以同样的目录树的形式存放在 target_dir 中。
+
+    因此，这个函数会创建(1) 一堆文件夹 (2) 一堆符号链接。
+
+    这种建立链接的方式可以防止 src_dir 的文件结构被破坏。
+
+    如果 src_dir 目录结构有了变化，删除 target_dir，再调用这个函数即可。
+
+    当调用该函数时，cmd/PowerShell 窗口要以管理员模式运行，因为 Windows 创建链接需要更高的权限。
+    :param src_dir: 原始目录
+    :param target_dir: 待生成目录
+    :param exclude_suffixes: 要排除的文件名后缀
+    :param include_suffixes: 要包括的文件名后缀
+    """
+    src_dir = os.path.abspath(src_dir)
+    target_dir = os.path.abspath(target_dir)
+
+    assert_is_dir(src_dir)
+
+    check_suf_ex = len(exclude_suffixes) > 0
+    check_suf_in = len(include_suffixes) > 0
+
+    if check_suf_ex and check_suf_in:
+        raise Exception(f'using both exclude_suffixes and include_suffixes is not allowed.')
+
+    if not isdir(target_dir):
+        os.makedirs(target_dir)
+
+    if len(os.listdir(target_dir)) > 0:
+        raise Exception(f'"{target_dir}" already has content.')
+
+    for (root, dirs, files) in os.walk(src_dir, topdown=True):
+        relative_path = str(Path(root[len(src_dir):]))
+        if relative_path.startswith('\\'):
+            relative_path = relative_path[1:]
+        cur_dir = os.path.abspath(join(target_dir, relative_path))
+        for f in files:
+            if check_suf_ex:
+                skip = False
+                for word in exclude_suffixes:
+                    if f.endswith(word):
+                        skip = True
+                        break
+                if skip:
+                    continue
+
+            if check_suf_in:
+                skip = True
+                for word in include_suffixes:
+                    if f.endswith(word):
+                        skip = False
+                        break
+                if skip:
+                    continue
+            # os.symlink works strange, so use mklink instead
+            # os.symlink(join(root, f), join(cur_dir, f), False)
+
+            # usage: mklink <link> <src>
+            run(f'mklink "{join(cur_dir, f)}" "{join(root, f)}"')
+        for d in dirs:
+            os.makedirs(join(cur_dir, d))
