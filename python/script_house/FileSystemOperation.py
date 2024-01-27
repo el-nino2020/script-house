@@ -157,6 +157,8 @@ def walk_while_link(src_dir: str, target_dir: str,
     if len(os.listdir(target_dir)) > 0:
         raise Exception(f'"{target_dir}" already has content.')
 
+    count = 0
+
     for (root, dirs, files) in os.walk(src_dir, topdown=True):
         relative_path = str(Path(root[len(src_dir):]))
         if relative_path.startswith('\\'):
@@ -185,5 +187,8 @@ def walk_while_link(src_dir: str, target_dir: str,
 
             # usage: mklink <link> <src>
             run(f'mklink "{join(cur_dir, f)}" "{join(root, f)}"')
+            count += 1
         for d in dirs:
             os.makedirs(join(cur_dir, d))
+
+    print(f'total {count} symlinks made.')
