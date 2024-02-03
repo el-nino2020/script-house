@@ -1,12 +1,12 @@
 from setuptools import find_packages, setup
 
-with open('python/README.md', 'r', encoding='utf-8') as f:
+with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name="script_house",
     version="0.0.2",
-    description="a python script house containing handy scripts for daily use",
+    description="a python script house containing handy functions for daily use",
     packages=find_packages(),
     url="https://github.com/el-nino2020/script-house",
     author="El nino",
