@@ -9,13 +9,13 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
     name="script_house",
-    version="0.1.1",
+    version="0.1.2",
     description="a python script house containing handy functions for daily use",
     packages=find_packages(),
     url="https://github.com/el-nino2020/script-house",
     author="El nino",
     author_email="el-nino202020@protonmail.com",
-    python_requires=">=3.11",
+    # python_requires=">=3.11",
     install_requires=requirements,
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 10",
